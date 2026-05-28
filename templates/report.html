@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendHunter AI - Отчёт по GEO {{ report.geo }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f5f7fa; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header-meta { display: flex; gap: 20px; margin-top: 15px; font-size: 14px; opacity: 0.9; flex-wrap: wrap; }
+        .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card-title { font-size: 22px; font-weight: 600; margin-bottom: 20px; border-left: 4px solid #667eea; padding-left: 16px; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .table th { background: #f7fafc; font-weight: 600; color: #4a5568; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .badge-urgent { background: #fed7d7; color: #c53030; }
+        .badge-week { background: #feebc8; color: #c05621; }
+        .badge-long { background: #c6f6d5; color: #276749; }
+        .badge-money { background: #c6f6d5; color: #276749; }
+        .badge-crisis { background: #fed7d7; color: #c53030; }
+        .priority-A { background: #c6f6d5; color: #276749; }
+        .priority-B { background: #feebc8; color: #c05621; }
+        .priority-C { background: #fed7d7; color: #c53030; }
+        .urgent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .urgent-item { background: #fff5f5; border-left: 4px solid #fc8181; padding: 16px; border-radius: 8px; }
+        .recommendation { background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+        .recommendation h3 { color: #276749; margin-bottom: 12px; }
+        .headline-list { list-style: none; margin-top: 12px; }
+        .headline-list li { background: #f7fafc; padding: 8px 12px; margin: 8px 0; border-radius: 6px; font-family: monospace; }
+        .footer { text-align: center; padding: 20px; color: #718096; font-size: 12px; }
+        @media (max-width: 768px) { .table { font-size: 12px; } .table th, .table td { padding: 8px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 TrendHunter AI - Мониторинг инфоповодов</h1>
+            <div class="header-meta">
+                <div>📍 <strong>GEO:</strong> {{ report.geo }}</div>
+                <div>📅 <strong>Дата:</strong> {{ report.generated_at }}</div>
+                <div>📆 <strong>Период:</strong> {{ report.period }}</div>
+            </div>
+        </div>
+        
+        <!-- Срочные темы -->
+        <div class="card">
+            <h2 class="card-title">🔥 Срочно к тесту (48 часов)</h2>
+            <div class="urgent-grid">
+                {% for item in report.urgent_items.urgent[:5] %}
+                <div class="urgent-item">
+                    <strong>{{ item.title }}</strong><br>
+                    <span class="badge">{{ item.trigger }}</span>
+                    <span class="badge badge-urgent">{{ item.expiry }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Инфоповоды -->
+        <div class="card">
+            <h2 class="card-title">📰 Сырые инфоповоды ({{ report.infopovods|length }} шт)</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Заголовок</th>
+                        <th>Категория</th>
+                        <th>Триггер</th>
+                        <th>Срок</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ip in report.infopovods[:15] %}
+                    <tr>
+                        <td><a href="{{ ip.source_url }}" target="_blank">{{ ip.title[:80] }}</a></td>
+                        <td>{{ ip.category }}</td>
+                        <td><span class="badge">{{ ip.trigger }}</span></td>
+                        <td><span class="badge badge-{{ 'urgent' if 'срочно' in ip.expiry else 'week' }}">{{ ip.expiry }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Топ рекомендации -->
+        <div class="card">
+            <h2 class="card-title">💡 Топ-5 идей для тестирования</h2>
+            {% for rec in report.top_recommendations[:5] %}
+            <div class="recommendation">
+                <h3>{{ loop.index }}. {{ rec.angle_text[:100] }}</h3>
+                <p><strong>Почему:</strong> {{ rec.recommendation_reason }}</p>
+                <p><strong>Оценки:</strong> Свежесть: {{ rec.freshness_score }}/10 | Сила: {{ rec.trigger_strength }}/10</p>
+                <strong>📝 Заголовки для теста:</strong>
+                <ul class="headline-list">
+                    {% for hl in rec.headlines[:3] %}
+                    <li>✍️ "{{ hl }}"</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Углы и идеи -->
+        <div class="card">
+            <h2 class="card-title">🎨 Углы и идеи ({{ report.angles|length }} шт)</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Угол</th>
+                        <th>Связь с оффером</th>
+                        <th>Приоритет</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for angle in report.angles[:15] %}
+                    <tr>
+                        <td>{{ angle.number }}</td>
+                        <td>{{ angle.angle_text[:60] }}</td>
+                        <td>{{ angle.offer_connection[:50] }}</td>
+                        <td><span class="badge priority-{{ angle.priority }}">{{ angle.priority }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Заголовки -->
+        <div class="card">
+            <h2 class="card-title">📝 Заголовки ({{ report.headlines|length }} шт)</h2>
+            {% for group in report.headlines[:10] %}
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #4a5568;">{{ group.angle }}</h3>
+                <ul class="headline-list">
+                    {% for hl in group.headlines[:5] %}
+                    <li>
+                        <strong>[{{ hl.format }}]</strong> {{ hl.text }} 
+                        <span style="color: #718096; font-size: 12px;">({{ hl.length }} симв.)</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="footer">
+            <p>Сгенерировано TrendHunter AI • {{ report.generated_at }}</p>
+        </div>
+    </div>
+</body>
+</html>
