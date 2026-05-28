@@ -6,7 +6,6 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111+-green.svg)](https://fastapi.tiangolo.com)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-orange.svg)](https://openai.com)
 [![License](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
 
 </div>
@@ -35,8 +34,22 @@
 
 - Python 3.11 или выше
 - Опционально: Docker и Docker Compose
-- Опционально: OpenAI API ключ (для продакшена)
 - Опционально: Ollama (для локальной работы)
+
+### Как работать с LLM (Ollama)
+- Установите Ollama (для локальной работы)
+# Скачайте Ollama для Windows:
+# https://ollama.com/download/windows
+
+# После установки, запустите в PowerShell:
+ollama pull mistral
+
+# Или более легкую модель:
+ollama pull tinyllama
+
+# Запустите сервер:
+ollama serve
+
 
 ### Установка
 
