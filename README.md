@@ -37,6 +37,7 @@
 - Опционально: Ollama (для локальной работы)
 
 ### Как работать с LLM (Ollama)
+```bash
 - Установите Ollama (для локальной работы)
 # Скачайте Ollama для Windows:
 # https://ollama.com/download/windows
@@ -49,6 +50,7 @@ ollama pull tinyllama
 
 # Запустите сервер:
 ollama serve
+```
 
 
 ### Установка
@@ -76,5 +78,5 @@ cp .env.example .env
 # Запуск приложения
 python main.py
 ```
-##Главная ссылка
+### Главная ссылка
 http://localhost:8000/ ссылка на полный проект с Frontend-частью
