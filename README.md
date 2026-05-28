@@ -56,8 +56,8 @@ ollama serve
 
 ```bash
 # Клонирование репозитория
-git clone https://github.com/your-username/trendhunter-ai.git
-cd trendhunter-ai
+git clone https://github.com/Mert0nys/HitchNew.git
+cd HitchNew
 
 # Создание виртуального окружения
 python -m venv venv
